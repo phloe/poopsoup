@@ -1,11 +1,10 @@
 var key = 0;
-var cache = {};
 var topics = {};
 
 function publish (topic, data) {
-	cache[topic] = data;
+	var key;
 	if (topics[topic]) {
-		for (var key in topics[topic]) {
+		for (key in topics[topic]) {
 			topics[topic][key](topic, data);
 		}
 	}
@@ -16,30 +15,17 @@ function subscribe (topic, callback) {
 	if (!topics[topic]) {
 		topics[topic] = {};
 	}
-	if (!topics[topic][_key]) {
+	if (!(_key in topics[topic])) {
 		topics[topic][_key] = callback;
 		key++;
-	}
-	if (cache[topic]) {
-		callback(topic, cache[topic]);
 	}
 	return _key;
 }
 
 function unsubscribe (topic, key) {
-	if (topics[topic] && topics[topic][key]) {
+	if (topics[topic] && key in topics[topic]) {
 		delete topics[topic][key];
 	}
-	if (isEmpty(topics[topic])) {
-		delete topics[topic];
-	}
-}
-
-function isEmpty (object) {
-	for (var key in object) {
-		return false;
-	}
-	return true;
 }
 
 module.exports.publish = publish;
