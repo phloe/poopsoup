@@ -11,7 +11,8 @@
 }("poopsoup", this, function () {
 
 	var topics = {};
-	var delimiter = "!";
+	var subPrefix = "subscribe!";
+	var unsubPrefix = "unsubscribe!";
 
 	function publish (topic, data) {
 		var key;
@@ -29,8 +30,8 @@
 		}
 		key = makeKey(topic);
 		topics[topic][key] = callback;
-		if (topic.indexOf(delimiter) < 0) {
-			publish("subscribe" + delimiter + topic, {subscribers: getCount(topics[topic])});
+		if (topic.indexOf(subPrefix) == 0) {
+			publish(subPrefix + topic, {subscribers: getCount(topics[topic])});
 		}
 		return key;
 	}
@@ -39,8 +40,8 @@
 		if (topics[topic] && key in topics[topic]) {
 			delete topics[topic][key];
 		}
-		if (topic.indexOf(delimiter) < 0) {
-			publish("unsubscribe" + delimiter + topic, {subscribers: getCount(topics[topic])});
+		if (topic.indexOf(unsubPrefix) == 0) {
+			publish(unsubPrefix + topic, {subscribers: getCount(topics[topic])});
 		}
 	}
 

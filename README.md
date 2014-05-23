@@ -105,11 +105,11 @@ Using a topic prefix some internals can be exposed:
 ### subscribe
 Prefix: `subscribe!`
 
-Can be used to be messages whenever a topic gets subscribed to.
+Can be used to be messaged whenever a topic gets subscribed to.
 `data` payload for the callback is an object with a `subscribers` property with a value equal to the number of current active subscribers.
 
 ### unsubscribe
 Prefix: `unsubscribe!`
 
-Can be used to be messages whenever a topic gets unsubscribed.
+Can be used to be messaged whenever a topic gets unsubscribed.
 `data` payload for the callback is an object with a `subscribers` property with a value equal to the number of current active subscribers.
