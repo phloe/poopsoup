@@ -6,15 +6,15 @@ Minimal pubsub module.
 ## Usage
 
 ```js
-var ps = require("poopsoup");
+var pubsub = require("poopsoup");
 
-var token = ps.subscribe("tweet", function (topic, data) {
+var key = pubsub.subscribe("tweet", function (topic, data) {
     console.log(topic, data);
 });
 
-ps.publish("tweet", "Woah! That's an unsanitary module name if I ever saw one... #yuck");
+pubsub.publish("tweet", "Woah! That's an unsanitary module name if I ever saw one... #yuck");
 
-ps.unsubscribe(token);
+pubsub.unsubscribe("tweet", key);
 ```
 
 ## Methods
@@ -35,12 +35,13 @@ ps.unsubscribe(token);
 - `callback` - Callback to call when data is published for the given topic.
 
 ##### Returns
-`number`
+`string`
 
 ### unsubscribe
 
 ##### Arguments
-- `token` - A token from a subscribe call.
+- `topic` - Topic to unsubscribe.
+- `key` - A subscription key from a subscribe call.
 
 ##### Returns
 `null`
