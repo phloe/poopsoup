@@ -5,14 +5,14 @@ Minimal pubsub module.
 
 ## Usage
 
-### Node
+#### Node
 
 ```js
 var pubsub = require("poopsoup");
 // do stuff with pubsub
 ```
 
-### AMD
+#### AMD
 
 ```js
 require(["poopsoup"], function (pubsub) {
@@ -20,13 +20,13 @@ require(["poopsoup"], function (pubsub) {
 });
 ```
 
-### Global in browser
+#### Global in browser
 
 ```js
 // do stuff with pubsub
 ```
 
-### Universal
+#### Universal
 
 ```js
 // define a topic
