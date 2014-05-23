@@ -11,6 +11,7 @@
 }("poopsoup", this, function () {
 
 	var topics = {};
+	var delimiter = "!";
 
 	function publish (topic, data) {
 		var key;
@@ -28,8 +29,8 @@
 		}
 		key = makeKey(topic);
 		topics[topic][key] = callback;
-		if (key.indexOf(":") < 0) {
-			publish("subscribe:" + topic, {subscribers: getKeys(topics[topic])});
+		if (topic.indexOf(delimiter) < 0) {
+			publish("subscribe" + delimiter + topic, {subscribers: getCount(topics[topic])});
 		}
 		return key;
 	}
@@ -38,8 +39,8 @@
 		if (topics[topic] && key in topics[topic]) {
 			delete topics[topic][key];
 		}
-		if (key.indexOf(":") < 0) {
-			publish("unsubscribe:" + topic, {subscribers: getKeys(topics[topic])});
+		if (topic.indexOf(delimiter) < 0) {
+			publish("unsubscribe" + delimiter + topic, {subscribers: getCount(topics[topic])});
 		}
 	}
 
@@ -47,22 +48,14 @@
 		var key = Math.round(Math.random() * 10e12).toString(36);
 		return (key in topics[topic]) ? makeKey(topic) : key;
 	}
-
-	function isEmpty (object) {
-		var prop;
-		for (prop in object) {
-			return false;
-		}
-		return true;
-	}
 	
-	function getKeys (object) {
-		var keys = [];
+	function getCount (object) {
+		var count = 0;
 		var key;
 		for (key in object) {
-			keys.push(key);
+			count++;
 		}
-		return keys;
+		return count;
 	}
 
 	return {

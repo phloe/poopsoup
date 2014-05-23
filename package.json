@@ -1,6 +1,6 @@
 {
 	"name": "poopsoup",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "Minimal pubsub module.",
 	"keywords": ["pubsub", "publish", "subscribe", "unsubscribe"],
 	"main": "main.js",

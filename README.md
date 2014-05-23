@@ -5,16 +5,67 @@ Minimal pubsub module.
 
 ## Usage
 
+### Node
+
 ```js
 var pubsub = require("poopsoup");
+// do stuff with pubsub
+```
 
-var key = pubsub.subscribe("tweet", function (topic, data) {
-    console.log(topic, data);
+### AMD
+
+```js
+require(["poopsoup"], function (pubsub) {
+	// do stuff with pubsub
+});
+```
+
+### Global in browser
+
+```js
+// do stuff with pubsub
+```
+
+### Universal
+
+```js
+// define a topic
+var topic = "tweet";
+
+// optionally keep track of new subscribers
+// by subscribing to a topic using the
+// internal "subscribe!" prefix
+pubsub.subscribe("subscribe!" + topic, function (topic, data) {
+	console.log("I now have", data.subscribers, "subscriber(s)! :)");
 });
 
-pubsub.publish("tweet", "Woah! That's an unsanitary module name if I ever saw one... #yuck");
+// unsubscriptions can be tracked in the same
+// manner via the "unsubscribe!" prefix
+pubsub.subscribe("unsubscribe!" + topic, function (topic, data) {
+	console.log("I now have", data.subscribers, "subscriber(s)... :(");
+});
 
-pubsub.unsubscribe("tweet", key);
+// subscribe in regular pubsub fashion
+// with a topic and a callback
+// a unique subscription key is returned
+// for unsubscription later
+var key = pubsub.subscribe(topic, function (topic, data) {
+    console.log("I just tweeted:", data);
+});
+
+// logged: I now have 1 subscriber(s)! :)
+
+// publish data to all subscribers
+pubsub.publish(topic, "Woah! That's an unsanitary module name if I ever saw one... #yuck");
+
+// logged: I just tweeted: Woah! That's an unsanitary module name if I ever saw one... #yuck
+
+// unsubscribe using the key 
+// generated previously
+pubsub.unsubscribe(topic, key);
+
+// logged: I now have 0 subscriber(s)... :(
+
 ```
 
 ## Methods
@@ -32,7 +83,9 @@ pubsub.unsubscribe("tweet", key);
 
 ##### Arguments
 - `topic` - Topic to subscribe to.
-- `callback` - Callback to call when data is published for the given topic.
+- `callback` - Callback to call when data is published for the given topic. The callback function receives the following arguments:
+  - `topic` - The topic of the subscription.
+  - `data` - The published data.
 
 ##### Returns
 `string`
@@ -45,3 +98,18 @@ pubsub.unsubscribe("tweet", key);
 
 ##### Returns
 `null`
+
+## Custom topics
+Using a topic prefix some internals can be exposed: 
+
+### subscribe
+Prefix: `subscribe!`
+
+Can be used to be messages whenever a topic gets subscribed to.
+`data` payload for the callback is an object with a `subscribers` property with a value equal to the number of current active subscribers.
+
+### unsubscribe
+Prefix: `unsubscribe!`
+
+Can be used to be messages whenever a topic gets unsubscribed.
+`data` payload for the callback is an object with a `subscribers` property with a value equal to the number of current active subscribers.
