@@ -29,36 +29,36 @@ require(["poopsoup"], function (pubsub) {
 #### Universal
 
 ```js
-// define a topic
+// define a topic.
 var topic = "tweet";
 
 // optionally keep track of new subscribers
-// by subscribing to a topic subscriptions
+// by subscribing to topic subscriptions.
 pubsub.onSubscribe(topic, function (topic, data) {
 	console.log("I now have", data.subscribers, "subscriber(s)! :)");
 });
 
-// unsubscriptions can be tracked in the same manner
+// unsubscriptions can be tracked in the same manner.
 pubsub.onUnsubscribe(topic, function (topic, data) {
 	console.log("I now have", data.subscribers, "subscriber(s)... :(");
 });
 
 // subscribe in regular pubsub fashion
-// with a topic and a callback
+// with a topic and a callback.
 // a unique subscription object is returned
-// for unsubscription later
+// for unsubscription later.
 var subscription = pubsub.subscribe(topic, function (topic, data) {
     console.log("I just tweeted:", data);
 });
 
 // logged: I now have 1 subscriber(s)! :)
 
-// publish data to all subscribers
+// publish data to all subscribers.
 pubsub.publish(topic, "Woah! That's an unsanitary module name if I ever saw one... #yuck");
 
 // logged: I just tweeted: Woah! That's an unsanitary module name if I ever saw one... #yuck
 
-// unsubscribe 
+// unsubscribe.
 subscription.remove();
 
 // logged: I now have 0 subscriber(s)... :(
@@ -90,19 +90,22 @@ A subscription object containing a `remove` method that cancels the subscription
 
 
 ### onSubscribe
+Can be used to be messaged whenever a topic gets subscribed to.
 
 ##### Arguments
-- `topic` - Topic to subscribe recieve subscription events for.
-- `callback` - Callback to call when data is published for the given topic. The callback function receives the following arguments:
+- `topic` - Topic to subscribe receive subscription events for.
+- `callback` - Callback for subscription events. The callback function receives the following arguments:
   - `topic` - The topic of the subscription.
-  - `data` - The published data.
-
-Can be used to be messaged whenever a topic gets subscribed to.
-`data` payload for the callback is an object with a `subscribers` property with a value equal to the number of current active subscribers.
+  - `data` - The subscription status which is an object containing the following information:
+    - `subscribers` - The number of current active subscribers.
 
 ### onUnsubscribe
+Can be used to be messaged whenever a topic gets unsubscribed.
 
 ##### Arguments
+- `topic` - Topic to subscribe receive unsubscription events for.
+- `callback` - Callback for unsubscription events. The callback function receives the following arguments:
+  - `topic` - The topic of the subscription.
+  - `data` - The subscription status which is an object containing the following information:
+    - `subscribers` - The number of current active subscribers.
 
-Can be used to be messaged whenever a topic gets unsubscribed.
-`data` payload for the callback is an object with a `subscribers` property with a value equal to the number of current active subscribers.
