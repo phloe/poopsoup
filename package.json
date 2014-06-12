@@ -1,8 +1,8 @@
 {
 	"name": "poopsoup",
-	"version": "1.1.1",
+	"version": "1.5.0",
 	"description": "Minimal pubsub module.",
-	"keywords": ["pubsub", "publish", "subscribe", "unsubscribe"],
+	"keywords": ["pubsub", "publish", "subscribe"],
 	"main": "main.js",
 	"repository": {
 		"type": "git",

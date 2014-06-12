@@ -23,7 +23,7 @@ require(["poopsoup"], function (pubsub) {
 #### Global in browser
 
 ```js
-// do stuff with pubsub
+// do stuff with globally available poopsoup
 ```
 
 #### Universal
@@ -33,23 +33,21 @@ require(["poopsoup"], function (pubsub) {
 var topic = "tweet";
 
 // optionally keep track of new subscribers
-// by subscribing to a topic using the
-// internal "subscribe!" prefix
-pubsub.subscribe("subscribe!" + topic, function (topic, data) {
+// by subscribing to a topic subscriptions
+pubsub.onSubscribe(topic, function (topic, data) {
 	console.log("I now have", data.subscribers, "subscriber(s)! :)");
 });
 
-// unsubscriptions can be tracked in the same
-// manner via the "unsubscribe!" prefix
-pubsub.subscribe("unsubscribe!" + topic, function (topic, data) {
+// unsubscriptions can be tracked in the same manner
+pubsub.onUnsubscribe(topic, function (topic, data) {
 	console.log("I now have", data.subscribers, "subscriber(s)... :(");
 });
 
 // subscribe in regular pubsub fashion
 // with a topic and a callback
-// a unique subscription key is returned
+// a unique subscription object is returned
 // for unsubscription later
-var key = pubsub.subscribe(topic, function (topic, data) {
+var subscription = pubsub.subscribe(topic, function (topic, data) {
     console.log("I just tweeted:", data);
 });
 
@@ -60,9 +58,8 @@ pubsub.publish(topic, "Woah! That's an unsanitary module name if I ever saw one.
 
 // logged: I just tweeted: Woah! That's an unsanitary module name if I ever saw one... #yuck
 
-// unsubscribe using the key 
-// generated previously
-pubsub.unsubscribe(topic, key);
+// unsubscribe 
+subscription.remove();
 
 // logged: I now have 0 subscriber(s)... :(
 
@@ -77,7 +74,7 @@ pubsub.unsubscribe(topic, key);
 - `data` - Data to publish for topic.
 
 ##### Returns
-`null`
+`null`
 
 ### subscribe
 
@@ -88,28 +85,24 @@ pubsub.unsubscribe(topic, key);
   - `data` - The published data.
 
 ##### Returns
-`string`
+`Object`
+A subscription object containing a `remove` method that cancels the subscription when called.
 
-### unsubscribe
+
+### onSubscribe
 
 ##### Arguments
-- `topic` - Topic to unsubscribe.
-- `key` - A subscription key from a subscribe call.
-
-##### Returns
-`null`
-
-## Custom topics
-Using a topic prefix some internals can be exposed: 
-
-### subscribe
-Prefix: `subscribe!`
+- `topic` - Topic to subscribe recieve subscription events for.
+- `callback` - Callback to call when data is published for the given topic. The callback function receives the following arguments:
+  - `topic` - The topic of the subscription.
+  - `data` - The published data.
 
 Can be used to be messaged whenever a topic gets subscribed to.
 `data` payload for the callback is an object with a `subscribers` property with a value equal to the number of current active subscribers.
 
-### unsubscribe
-Prefix: `unsubscribe!`
+### onUnsubscribe
+
+##### Arguments
 
 Can be used to be messaged whenever a topic gets unsubscribed.
 `data` payload for the callback is an object with a `subscribers` property with a value equal to the number of current active subscribers.

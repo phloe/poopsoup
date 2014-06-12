@@ -10,59 +10,81 @@
 	}
 }("poopsoup", this, function () {
 
-	var topics = {};
-	var subPrefix = "subscribe!";
-	var unsubPrefix = "unsubscribe!";
+	var sub = factory({});
+	var unsub = factory({});
+	var topics = factory({}, sub, unsub);
 
-	function publish (topic, data) {
-		var key;
-		if (topics[topic]) {
-			for (key in topics[topic]) {
-				topics[topic][key](topic, data);
+	return {
+		publish: topics.publish,
+		subscribe: topics.subscribe,
+		onSubscribe: sub.subscribe,
+		onUnsubscribe: unsub.subscribe
+	};
+
+	function factory (topics, sub, unsub) {
+		
+		var id = 0;
+		
+		function publish (topic, data) {
+			var id, subscriber;
+			var subscribers = topics[topic];
+			if (subscribers) {
+				for (id in subscribers) {
+					subscriber = subscribers[id];
+					subscriber.callback.call(subscriber.context, topic, data);
+				}
 			}
 		}
-	}
-
-	function subscribe (topic, callback) {
-		var key;
-		if (!topics[topic]) {
-			topics[topic] = {};
-		}
-		key = makeKey(topic);
-		topics[topic][key] = callback;
-		if (topic.indexOf(subPrefix) == 0) {
-			publish(subPrefix + topic, {subscribers: getCount(topics[topic])});
-		}
-		return key;
-	}
-
-	function unsubscribe (topic, key) {
-		if (topics[topic] && key in topics[topic]) {
-			delete topics[topic][key];
-		}
-		if (topic.indexOf(unsubPrefix) == 0) {
-			publish(unsubPrefix + topic, {subscribers: getCount(topics[topic])});
-		}
-	}
-
-	function makeKey (topic) {
-		var key = Math.round(Math.random() * 10e12).toString(36);
-		return (key in topics[topic]) ? makeKey(topic) : key;
-	}
 	
-	function getCount (object) {
+		function subscribe (topic, callback, context) {
+			var subscribers;
+			if (!topics[topic]) {
+				topics[topic] = {};
+			}
+			subscribers = topics[topic];
+			var _id = id++;
+			subscribers[_id] = {
+				callback: callback,
+				context: context || null
+			};
+			if (sub) {
+				sub.publish(topic, {subscribers: count(subscribers)});
+			}
+			return {
+				remove: function () {
+					return unsubscribe(_id);
+				}
+			};
+		}
+	
+		function unsubscribe (id) {
+			var topic, subscribers;
+			for (topic in topics) {
+				subscribers = topics[topic];
+				if (id in subscribers) {
+					delete subscribers[id];
+					if (unsub) {
+						unsub.publish(topic, {subscribers: count(subscribers)});
+					}
+					return true;
+				}
+			}
+			return false;
+		}
+	
+		return {
+			publish: publish,
+			subscribe: subscribe
+		};
+	};
+	
+	function count (object) {
 		var count = 0;
-		var key;
-		for (key in object) {
+		var id;
+		for (id in object) {
 			count++;
 		}
 		return count;
 	}
-
-	return {
-		publish: publish,
-		subscribe: subscribe,
-		unsubscribe: unsubscribe
-	};
 
 }));
